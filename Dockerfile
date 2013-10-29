@@ -18,9 +18,10 @@ RUN echo "host    all             docker          0.0.0.0/0               trust"
 RUN cp /var/lib/pgsql/9.2/data/pg_hba.conf /var/lib/pgsql/9.2/data/.bak
 RUN echo "listen_addresses = '*'" >> /var/lib/pgsql/9.2/data/postgresql.conf
 RUN echo "port = 5432" >> /var/lib/pgsql/9.2/data/postgresql.conf
+RUN touch /etc/sysconfig/network
 RUN service postgresql-9.2 start && runuser -l postgres -c 'createuser -d -s -r -l docker' && runuser -l postgres -c "psql postgres -c \"ALTER USER docker WITH ENCRYPTED PASSWORD 'docker'\"" && service postgresql-9.2 stop
 RUN echo 'HOSTNAME=database' >> /etc/sysconfig/network
 
 EXPOSE 5432
 
-CMD ['/bin/su', 'postgres -c', "'/usr/pgsql-9.2/bin/postgres -D /var/lib/pgsql/9.2/data -c config_file=/var/lib/pgsql/9.2/data/postgresql.conf'"]
+CMD ["/bin/su", "postgres", "-c", "/usr/pgsql-9.2/bin/postgres -D /var/lib/pgsql/9.2/data -c config_file=/var/lib/pgsql/9.2/data/postgresql.conf"]
