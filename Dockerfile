@@ -2,20 +2,17 @@ FROM centos
 
 MAINTAINER erickbrower
 
-RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak && sed '/^\[base\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo.bak > /etc/yum.repos.d/CentOS-Base.repo
-RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak && sed '/^\[updates\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo.bak > /etc/yum.repos.d/CentOS-Base.repo
+RUN sed '/^\[base\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo > /etc/yum.repos.d/CentOS-Base.repo
+RUN sed '/^\[updates\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo > /etc/yum.repos.d/CentOS-Base.repo
 RUN rpm -Uvh http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm
 RUN yum install -y postgresql92 postgresql92-server postgresql92-contrib
 RUN su - postgres -c /usr/pgsql-9.2/bin/initdb
 RUN rpm -Uvh http://elgis.argeo.org/repos/6/elgis-release-6-6_0.noarch.rpm
 RUN rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-RUN yum install -y libspatialite.x86_64
-RUN yum install -y postgis2_92
+RUN yum install -y libspatialite.x86_64 postgis2_92
 RUN sed -i.bak -e '53d' /etc/init.d/postgresql-9.2
-RUN cp /var/lib/pgsql/9.2/data/pg_hba.conf /var/lib/pgsql/9.2/data/pg_hba.conf.bak
 RUN echo "host    all             all             0.0.0.0/0               md5" >> /var/lib/pgsql/9.2/data/pg_hba.conf
 RUN echo "host    all             docker          0.0.0.0/0               trust" >> /var/lib/pgsql/9.2/data/pg_hba.conf
-RUN cp /var/lib/pgsql/9.2/data/pg_hba.conf /var/lib/pgsql/9.2/data/.bak
 RUN echo "listen_addresses = '*'" >> /var/lib/pgsql/9.2/data/postgresql.conf
 RUN echo "port = 5432" >> /var/lib/pgsql/9.2/data/postgresql.conf
 RUN touch /etc/sysconfig/network
