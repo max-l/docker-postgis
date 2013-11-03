@@ -2,8 +2,8 @@ FROM centos
 
 MAINTAINER erickbrower
 
-RUN sed '/^\[base\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo > /etc/yum.repos.d/CentOS-Base.repo
-RUN sed '/^\[updates\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo > /etc/yum.repos.d/CentOS-Base.repo
+RUN sed -i.bak '/^\[base\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo
+RUN sed -i.bak '/^\[updates\]/a exclude=postgresql\*' /etc/yum.repos.d/CentOS-Base.repo 
 RUN rpm -Uvh http://yum.postgresql.org/9.2/redhat/rhel-6-x86_64/pgdg-centos92-9.2-6.noarch.rpm
 RUN yum install -y postgresql92 postgresql92-server postgresql92-contrib
 RUN su - postgres -c /usr/pgsql-9.2/bin/initdb
